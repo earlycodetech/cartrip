@@ -1,4 +1,6 @@
-import HooksExample from "@/components/hooks";
+import Image from "next/image";
+import { inventory } from "@/lib/car-inventory";
+import InventoryCard from "@/components/inventoryCard";
 
 export default function Home() {
   return (
