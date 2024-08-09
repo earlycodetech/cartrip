@@ -1,8 +1,13 @@
+"use client"
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import { CiMenuBurger } from "react-icons/ci";
 import { IoCloseOutline } from "react-icons/io5";
+import { GeneralNavBar } from "./nav_components/GeneralNavBar";
+import { DashboardNavBar } from "./nav_components/DashboardNavBar";
 
 const montserrat_thin_100 = Montserrat({
     subsets:["latin"],
@@ -10,6 +15,9 @@ const montserrat_thin_100 = Montserrat({
 });
 
 export default function Nav () {
+    const [menu,setMenu] = useState(false);
+    const path = usePathname();
+
     return (
         <>
         <nav className="h-[60px] flex justify-between items-center px-4 bg-black">
@@ -21,33 +29,39 @@ export default function Nav () {
                 alt="brand logo"/>
             </div>
 
-            <ul className="hidden lg:flex gap-8">
-                <li>
-                    <Link 
-                    className={`${montserrat_thin_100.className} text-yellow-50 text-lg`}
-                    href="/">Home</Link>
-                </li>
-                <li>
-                    <Link 
-                    className={`${montserrat_thin_100.className} text-yellow-50 text-lg`}
-                    href="#">About us</Link>
-                </li>
-                <li>
-                    <Link 
-                    className={`${montserrat_thin_100.className} text-yellow-50 text-lg`}
-                    href="#">Contact us</Link>
-                </li>
-                <li>
-                    <Link 
-                    className={`${montserrat_thin_100.className} text-yellow-50 text-lg`}
-                    href="#">Account</Link>
-                </li>
-            </ul>
+            {
+                path.split("/").includes("dashboard") 
+                ? <DashboardNavBar cssClass="hidden lg:flex flex-col lg:flex-row gap-6 p-4"/> 
+                : <GeneralNavBar cssClass="hidden lg:flex gap-8"/>
+            }
 
-            <blockquote>
-                <CiMenuBurger className="text-yellow-50 text-2xl"/>
+            <blockquote className="lg:hidden">
+                {
+                !menu
+                ?
+                <CiMenuBurger onClick={() => setMenu(true)} className="text-yellow-50 text-2xl"/>
+                :
+                <IoCloseOutline onClick={() => setMenu(false)} className="text-yellow-50 text-2xl"/>
+                }
             </blockquote>
         </nav>
+
+        {/* MOBILE NAV */}
+
+        {
+        menu
+        ?
+        <div className="min-h-[240px] bg-black">
+            <div className="h-[6px] bg-gradient-to-r from-yellow-500 via-blue-500 to-red-500"></div>
+
+            {
+                path.split("/").includes("dashboard") 
+                ? <DashboardNavBar cssClass="flex flex-col lg:flex-row gap-6 p-4"/> 
+                : <GeneralNavBar cssClass="flex flex-col lg:flex-row gap-8 p-4"/>
+            }
+        </div>
+        : null
+        }
         </>
     )
 }
