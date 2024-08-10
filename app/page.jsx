@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { inventory } from "@/lib/car-inventory";
 import InventoryCard from "@/components/inventoryCard";
 
@@ -11,7 +12,7 @@ export default function Home() {
                 <h1 className="text-5xl md:text-6xl text-white text-center font-bold">Get the <span className="text-yellow-600">comfort</span> you deserve with our rentals whether it's for <span className="text-yellow-600">luxury</span> or on your <span className="text-yellow-600">temporal stay</span></h1>
 
                 <p className="text-center px-6">
-                    <a href="#" className="inline-block md:inline w-full md:w-auto px-6 py-4 rounded-xl bg-yellow-400 text-xl">Rent Now</a>
+                    <Link href="/cars" className="inline-block md:inline w-full md:w-auto px-6 py-4 rounded-xl bg-yellow-400 text-xl">Rent Now</Link>
                 </p>
             </blockquote>
         </div>
