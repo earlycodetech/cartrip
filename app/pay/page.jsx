@@ -3,7 +3,7 @@ import React from 'react';
 import { useRouter,useSearchParams } from 'next/navigation';
 import { PaystackButton } from 'react-paystack';
 import { db } from '@/lib/firebase.config';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc,updateDoc } from "firebase/firestore";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
@@ -25,9 +25,18 @@ export default function Pay() {
         fetchData()
     },[]);
 
-    const handlePaystackSuccessAction = (reference) => {
-        // Implementation for whatever you want to do with reference and after success call.
-        console.log(reference);
+    const handlePaystackSuccessAction = async (reference) => {
+        // update record after successful payment. 
+        //We are creating a new firestor field called "paymentStatus"
+        await updateDoc(doc(db,"bookings",documentId),{
+            paymentStatus: reference,
+        })
+        .then(() => {
+            router.push(`/dashboard`)
+        })
+        .catch(e => {
+            console.error(e)
+        })
     };
 
     // when the Paystack dialog closed
