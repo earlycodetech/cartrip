@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Montserrat } from "next/font/google";
+import { signOut } from "next-auth/react";
 
 const montserrat_thin_100 = Montserrat({
     subsets:["latin"],
@@ -21,6 +22,7 @@ export function DashboardNavBar ({cssClass}) {
             </li>
             <li>
                 <Link 
+                onClick={signOut}
                 className={`${montserrat_thin_100.className} text-yellow-50 text-lg`}
                 href="#">Sign out</Link>
             </li>

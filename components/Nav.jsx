@@ -21,13 +21,13 @@ export default function Nav () {
     return (
         <>
         <nav className="h-[60px] flex justify-between items-center px-4 bg-black">
-            <div>
+            <Link href="/">
                 <Image 
                 width={54} 
                 height={54}
                 src="/brands/mustang-logo.png"
                 alt="brand logo"/>
-            </div>
+            </Link>
 
             {
                 path.split("/").includes("dashboard") 
