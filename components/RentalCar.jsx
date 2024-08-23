@@ -34,6 +34,8 @@ export default function RentalCar ({carId,carClass,carType,seatCap,hRate,carImg}
                 phone:values.phone,
                 address:values.address,
                 comments:values.comments,
+                status:"active",
+                bill: null,
                 email:session.user.email,
                 uid:null,
                 timecreated:new Date().getTime()
