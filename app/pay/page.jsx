@@ -10,11 +10,11 @@ import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
 export default function Pay() {
     const [bookingDoc,setBookingDoc] = React.useState({});
 
-    const router = useRouter();
-    const params = useSearchParams();
-    const documentId = params.get("id"); //gets the document id passed in on the browser
-
     React.useEffect( () => {
+        const router = useRouter();
+        const params = useSearchParams();
+        const documentId = params.get("id"); //gets the document id passed in on the browser
+
         async function fetchData () {
             !documentId ? router.push("/dashboard") : null;
 
@@ -28,7 +28,7 @@ export default function Pay() {
     const config = {
         public_key: "FLWPUBK_TEST-07eb955aba643e63f3c057bd00d016ff-X",
         tx_ref: Date.now(),
-        amount: 49000, //was multiplied by 100 to convert to kobo, because paystack wants it in kobo
+        amount: bookingDoc.bill,
         currency: "NGN",
         payment_options: "card,mobilemoney,ussd",
         customer: {
