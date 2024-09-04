@@ -1,11 +1,11 @@
 "use client"
 import React from 'react';
 import { useRouter,useSearchParams } from 'next/navigation';
-import { PaystackButton } from 'react-paystack';
 import { db } from '@/lib/firebase.config';
 import { doc, getDoc,updateDoc } from "firebase/firestore";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
 
 export default function Pay() {
     const [bookingDoc,setBookingDoc] = React.useState({});
@@ -13,7 +13,7 @@ export default function Pay() {
     const router = useRouter();
     const params = useSearchParams();
     const documentId = params.get("id"); //gets the document id passed in on the browser
-    
+
     React.useEffect( () => {
         async function fetchData () {
             !documentId ? router.push("/dashboard") : null;
@@ -24,36 +24,44 @@ export default function Pay() {
         }
         fetchData()
     },[]);
-
-    const handlePaystackSuccessAction = async (reference) => {
-        // update record after successful payment. 
-        //We are creating a new firestor field called "paymentStatus"
-        await updateDoc(doc(db,"bookings",documentId),{
-            paymentStatus: reference,
-        })
-        .then(() => {
-            router.push(`/dashboard`)
-        })
-        .catch(e => {
-            console.error(e)
-        })
-    };
-
-    // when the Paystack dialog closed
-    const handlePaystackCloseAction = () => router.push("/dashboard");
-
+    
     const config = {
-        reference: (new Date()).getTime().toString(),
-        email: bookingDoc.email,
-        amount: bookingDoc.bill * 100, //was multiplied by 100 to convert to kobo, because paystack wants it in kobo
-        publicKey: "pk_test_7469db3bf77e8b277ee60983d29564681951e24a",
-    }
-
-    const componentProps = {
+        public_key: "FLWPUBK_TEST-07eb955aba643e63f3c057bd00d016ff-X",
+        tx_ref: Date.now(),
+        amount: 49000, //was multiplied by 100 to convert to kobo, because paystack wants it in kobo
+        currency: "NGN",
+        payment_options: "card,mobilemoney,ussd",
+        customer: {
+          email: bookingDoc.email,
+          phone_number: bookingDoc.phone,
+          name: "john doe",
+        },
+        customizations: {
+          title: "Cartrip Rental Limited",
+          description: `Payment for rental with ID ${bookingDoc.carId}`,
+          logo: 'https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg',
+        },
+    };
+    
+    const fwConfig = {
         ...config,
-        text: 'Initiate Payment',
-        onSuccess: (reference) => handlePaystackSuccessAction(reference),
-        onClose: handlePaystackCloseAction,
+        text: 'Make Payment',
+        callback: async response => {
+            // update record after successful payment. 
+            //We are creating a new firestor field called "paymentStatus"
+            await updateDoc(doc(db,"bookings",documentId),{
+                paymentStatus: response,
+            })
+            .then(() => {
+                router.push(`/dashboard`)
+            })
+            .catch(e => {
+                console.error(e)
+            })
+
+            closePaymentModal() // this will close the modal programmatically
+        },
+        onClose: () => {},
     };
 
     return (
@@ -69,9 +77,7 @@ export default function Pay() {
                             <span className="block text-sm text-gray-700">Email: {bookingDoc.email}</span>
                         </blockquote>
 
-                        <PaystackButton 
-                        {...componentProps} 
-                        className="py-3 px-4 rounded-md bg-red-600 text-white uppercase" />
+                        <FlutterWaveButton {...fwConfig} className="py-3 px-4 rounded-md bg-red-600 text-white uppercase"/>
                     </div>
                 </CardContent>
             </Card>
