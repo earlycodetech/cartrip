@@ -1,5 +1,6 @@
 "use client"
-import { useState } from "react";
+import { useState,useContext } from "react";
+import { AppContext } from "@/lib/context";
 import Image from "next/image";
 import { inventory } from "@/lib/car-inventory";
 import { CiTrash } from "react-icons/ci";
@@ -12,6 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 export function BookingCard ({carId,timestamp,docId}) {
     const [activityIndicator,setActivityIndicator] = useState(false);
     const car = inventory.filter(item => item.id === carId)[0];
+    const {setPackageId} = useContext(AppContext);
 
     const router = useRouter();
 
@@ -61,7 +63,8 @@ export function BookingCard ({carId,timestamp,docId}) {
         .then(() => {
             setActivityIndicator(false);
             console.log("updated");
-            router.push(`/pay?id=${docId}`)
+            router.push("/pay");
+            setPackageId(docId)//set packageId for global variable (useContext)
         })
         .catch(e => {
             console.error(e)
